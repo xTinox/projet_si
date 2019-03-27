@@ -37,7 +37,7 @@ void receiveData(int byteCount){
           flag_users=false;
           recv_allow_users();
         }
-        if else(dataReceived==2){
+        else if(dataReceived==2){
           init_allow_users();
           flag_users=true;
         }
@@ -46,7 +46,7 @@ void receiveData(int byteCount){
 
 void sendData(){
     if(flag_users==false){
-      wire.write(0)
+      Wire.write(0);
     }
     else{
       Wire.write(1);
