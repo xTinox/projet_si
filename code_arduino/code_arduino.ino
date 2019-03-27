@@ -33,11 +33,11 @@ void receiveData(int byteCount){
         dataReceived = Wire.read();
         Serial.print("Donnee recue : ");
         Serial.println(dataReceived);
-        if(dataReceived==0){
+        if(dataReceived==1){
           flag_users=false;
           recv_allow_users();
         }
-        else{
+        if else(dataReceived==2){
           init_allow_users();
           flag_users=true;
         }
@@ -45,8 +45,12 @@ void receiveData(int byteCount){
 }
 
 void sendData(){
-    byte tab[5]={1,2,3,4,5};
-    Wire.write(tab,5);
+    if(flag_users==false){
+      wire.write(0)
+    }
+    else{
+      Wire.write(1);
+    }
 }
 //on cree la fontion de récuperation d'iud
 void recv_allow_users(){
