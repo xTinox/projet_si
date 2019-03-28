@@ -24,6 +24,7 @@ void loop() {
     if(flag_users){
       Serial.println(flag_users);
       lcd.clear();
+      while(1);
     }
     else wait();
     delay(200);
