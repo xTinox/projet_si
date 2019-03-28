@@ -19,7 +19,10 @@ bool flag_users=false;
 String buffer_uid="";
 String buffer_uid_users="";
 String *allow_users=NULL;
-unsigned nb_allow_users=0;
+unsigned nb_allow_users=1;
+
+String *buffer_users=NULL;
+unsigned int nb_buffer_users=0;
 
 void setup() {
     Serial.begin(9600);
@@ -44,11 +47,23 @@ void loop() {
     if(! rfid.PICC_IsNewCardPresent()) return;
     //nous vérifions que l'uid est lu
     if(! rfid.PICC_ReadCardSerial()) return;
+    //on cree le tab si il n'existe pas
+    /*Clement test ça*/
+    if(buffer_users==NULL) buffer_users=(String *) calloc(1,sizeof(String));
+    //reallocation de la mémoir
+    else{
+     realloc(buffer_users,nb_buffer_users*sizeof(String));
+    }
     //on lie l'uid de 4 octés
     for(int i=0;i<4;i++){
     //on ajoute les octés au buffer
     buffer_uid += rfid.uid.uidByte[i];
     }
+    buffer_users[nb_buffer_users]=buffer_uid;
+    if(check_in(buffer_users[nb_buffer_users],allow_users,nb_allow_users)){
+      allow();
+    }
+    
     delay(200);
 }
 
@@ -73,6 +88,14 @@ void sendData(){
     else{
       Wire.write(1);
     }
+}
+//fonction d'acceptation
+void allow(){
+  lcd.clear();//on clear le lcd
+  lcd.setCursor(0,0);//on place le curseur sur 0,0
+  lcd.print("Allow");
+  lcd.setCursor(0,1);
+  lcd.print(buffer_users[nb_buffer_users]);
 }
 //fonction de vérification element in tab
 bool check_in(String check,String tab[],int nb){
