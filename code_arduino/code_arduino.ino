@@ -19,9 +19,9 @@ bool flag_users=false;
 String buffer_uid="";
 String buffer_uid_users="";
 String *allow_users=NULL;
-unsigned nb_allow_users=1;
+unsigned nb_allow_users=0;
 
-String *buffer_users=NULL;
+String buffer_users[6];
 unsigned int nb_buffer_users=0;
 
 void setup() {
@@ -48,17 +48,21 @@ void loop() {
     //nous vérifions que l'uid est lu
     if(! rfid.PICC_ReadCardSerial()) return;
     //on cree le tab si il n'existe pas
-    /*Clement test ça*/
-    if(buffer_users==NULL) buffer_users=(String *) calloc(1,sizeof(String));
+    /*Clement test ça
+    if(buffer_users==NULL) {
+      Serial.println("test");
+      buffer_users=(String*) calloc(1,sizeof(String));
+    }
     //reallocation de la mémoir
     else{
      realloc(buffer_users,nb_buffer_users*sizeof(String));
-    }
+    }*/
     //on lie l'uid de 4 octés
     for(int i=0;i<4;i++){
     //on ajoute les octés au buffer
     buffer_uid += rfid.uid.uidByte[i];
     }
+    Serial.println(decToHex(buffer_uid.toInt()));
     buffer_users[nb_buffer_users]=buffer_uid;
     //on increment le nb
     nb_buffer_users++;
@@ -95,6 +99,12 @@ void sendData(){
     else{
       Wire.write(1);
     }
+}
+// dec to hex
+String decToHex(int decValue){
+  String hexStr=String(decValue,HEX);
+  while(hexStr.length()<8)hexStr="0"+hexStr;
+  return hexStr;
 }
 //fonction de refus
 void denied(){
