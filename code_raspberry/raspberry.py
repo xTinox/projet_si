@@ -15,13 +15,13 @@ class Arduino(SMBus):
         f=open(self.path,"r")
         for i in f.readline():
             #on lie les uid et on enlève le \n (retour ligne) d'ou le [:2]
+            print(i[:2])
             time.sleep(0.4)
             self.write_i2c_block_data(self.addr,1,i[:2].encode())
         self.write_byte(self.addr,2)
     def get_status(self):
         self.write_byte(self.addr,0)
         tmp=self.read_byte(self.addr)
-        print(tmp)
         retour=self.dico.get(self.read_byte(self.addr))
         if(retour!=None): retour()
 
