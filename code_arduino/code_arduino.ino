@@ -60,12 +60,9 @@ void loop() {
     //on lie l'uid de 4 octés
     for(int i=0;i<4;i++){
     //on ajoute les octés au buffer
-    buffer_uid += rfid.uid.uidByte[i];
+    buffer_uid += String(rfid.uid.uidByte[i],HEX);
     }
-    Serial.println(decToHex(buffer_uid.toInt()));
     buffer_users[nb_buffer_users]=buffer_uid;
-    //on increment le nb
-    nb_buffer_users++;
     //si l'utilisateur est accepté
     if(check_in(buffer_users[nb_buffer_users],allow_users,nb_allow_users)){
       allow();
@@ -74,6 +71,8 @@ void loop() {
     else{
       denied();
     }
+    //on increment le nb
+    nb_buffer_users++;
     
     delay(3500);
 }
@@ -100,12 +99,7 @@ void sendData(){
       Wire.write(1);
     }
 }
-// dec to hex
-String decToHex(int decValue){
-  String hexStr=String(decValue,HEX);
-  while(hexStr.length()<8)hexStr="0"+hexStr;
-  return hexStr;
-}
+
 //fonction de refus
 void denied(){
   lcd.clear();
