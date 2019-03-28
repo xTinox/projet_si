@@ -60,8 +60,15 @@ void loop() {
     buffer_uid += rfid.uid.uidByte[i];
     }
     buffer_users[nb_buffer_users]=buffer_uid;
+    //on increment le nb
+    nb_buffer_users++;
+    //si l'utilisateur est accepté
     if(check_in(buffer_users[nb_buffer_users],allow_users,nb_allow_users)){
       allow();
+    }
+    //sinon
+    else{
+      denied();
     }
     
     delay(200);
@@ -88,6 +95,14 @@ void sendData(){
     else{
       Wire.write(1);
     }
+}
+//fonction de refus
+void denied(){
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Denied");
+  lcd.setCursor(0,1);
+  lcd.print(buffer_users[nb_buffer_users]);
 }
 //fonction d'acceptation
 void allow(){
