@@ -41,7 +41,7 @@ void loop() {
       wait();
       return;
     }
-    
+    lcd.clear();
     buffer_uid="";//on vide le buffer
     //nous vérifions si une carte est presente devant le lecteur
     if(! rfid.PICC_IsNewCardPresent()) return;
@@ -71,7 +71,7 @@ void loop() {
       denied();
     }
     
-    delay(200);
+    delay(3500);
 }
 
 void receiveData(int byteCount){
