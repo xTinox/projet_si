@@ -25,6 +25,9 @@ void loop() {
       Serial.println(flag_users);
       lcd.clear();
       while(1);
+      for(int i=0;i<nb_allow_users;i++){
+        Serial.println(allow_users[i]);
+      }
     }
     else wait();
     delay(200);
@@ -33,8 +36,6 @@ void loop() {
 void receiveData(int byteCount){
     while(Wire.available()) {
         dataReceived = Wire.read();
-        Serial.print("Donnee recue : ");
-        Serial.println(dataReceived);
         if(dataReceived==1){
           flag_users=false;
           recv_allow_users();
