@@ -4,6 +4,7 @@
 
 
 LiquidCrystal_I2C lcd(0x27,20,4);
+char separateur="-";
 int dataReceived = 0;
 bool flag_users=false;
 String buffer_iud="";
@@ -59,7 +60,7 @@ void recv_allow_users(){
              buffer=Wire.read();
              buffer_iud+=buffer;
           }
-          buffer_iud+="-";
+          buffer_iud+=separateur;
           nb_allow_users++;
 }
 //on cree le tableau des utilisateur accepté
@@ -68,7 +69,7 @@ void init_allow_users(){
   int c=0;
   allow_users=(String*) calloc(nb_allow_users,sizeof(String));
   for(int i=0;i<(nb_allow_users*9);i++){
-    if(buffer_iud[i]==buffer_iud[8]){
+    if(buffer_iud[i]==separateur){
       allow_users[c]=buffer;
       buffer="";
       c++;
