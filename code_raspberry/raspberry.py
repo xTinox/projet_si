@@ -17,7 +17,7 @@ class Arduino(SMBus):
             #on lie les uid et on enlève le \n (retour ligne) d'ou le [:2]
             print(i,len(i))
             time.sleep(0.6)
-            self.write_i2c_block_data(self.addr,1,i[:2].encode())
+            self.write_i2c_block_data(self.addr,1,i[:1].encode())
         self.write_byte(self.addr,2)
     def get_status(self):
         self.write_byte(self.addr,0)
