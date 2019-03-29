@@ -7,8 +7,8 @@ class Arduino(SMBus):
     def __init__(self,addr,path_src,path_dst):
         super().__init__(1)
         self.addr=addr
-        self.src=open(self.path_src,"r")
-        self.dst=open(self.path_dst,"a")
+        self.src=open(path_src,"r")
+        self.dst=open(path_dst,"a")
         self.dico={
         0:self.send_allow_users,
         1:self.recv_users
