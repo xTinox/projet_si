@@ -9,19 +9,20 @@
 #define LED_PIN_J 2 //pin led jaune
 #define LED_PIN_R 4 //pin led rouge
 #define BUZZER 7 //pin buzzer
+#define TAILLE_TAB 10
 
 LiquidCrystal_I2C lcd(0x27,20,4); //on cree une instance de la class lcd
 MFRC522 rfid(SS_PIN, RST_PIN); // On instancie un MFRC522
 //decalaration des variable
 char separateur="-";
 int dataReceived = 0;
-bool flag_users=false;
+int flag_users=0;
 String buffer_uid="";
 String buffer_uid_users="";
 String *allow_users=NULL;
 unsigned nb_allow_users=0;
 
-String buffer_users[10]="";
+String buffer_users[TAILLE_TAB]="";
 unsigned int nb_buffer_users=0;
 
 void setup() {
@@ -63,29 +64,51 @@ void loop() {
     }
     //on increment le nb
     nb_buffer_users++;
-    delay(3500);
+    delay(5000);
 }
 
 void receiveData(int byteCount){
     while(Wire.available()) {
         dataReceived = Wire.read();
-        if(dataReceived==1){
-          flag_users=false;
-          recv_allow_users();
-        }
-        else if(dataReceived==2){
-          init_allow_users();
-          flag_users=true;
-        }
+        //switch
+        switch (dataReceived){
+          case(1):
+            flag_users=0;
+            recv_allow_users();
+            break;
+          case(2):
+           init_allow_users();
+           flag_users=1;
+           break;
+          case(3):
+           flag_users=2;  
+      } 
     }
 }
 
 void sendData(){
-    if(flag_users==false){
-      Wire.write(0);
-    }
-    else{
-      Wire.write(1);
+    static int compteur_uid_send=0;
+    //switch
+    switch(flag_users){
+      //cas reception
+      case(0):
+        Wire.write(0);
+        break;
+      //cas envoie donnée  buffer_users
+      case(1):
+        //clear buffer
+        if(compteur_uid_send>nb_buffer_users){
+           nb_buffer_users=0;
+           for(int i=0;i<TAILLE_TAB;i++){
+              buffer_users[i]=""; 
+           }
+           compteur_uid_send=0;
+        }
+        else {
+          char buff[8]="";
+          buffer_users[compteur_uid_send].toCharArray(buff,8);
+          Wire.write(buff,8);
+        }
     }
 }
 
@@ -149,3 +172,4 @@ void wait(){
     lcd.print(".");
   }
 }
+//fonction d'envoie de donnée
