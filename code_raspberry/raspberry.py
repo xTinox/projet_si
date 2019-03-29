@@ -9,12 +9,9 @@ class Arduino(SMBus):
         self.addr=addr
         self.src=open(path_src,"r")
         self.dst=open(path_dst,"a")
-        self.dico={
-        0:self.send_allow_users,
-        1:self.recv_users
-        }
     def __str__(self):
-        return "Arduino sur l'address {}".format(self.addr)
+        return "Arduino sur l'addresse {}".format(self.addr)
+    #envoyer les uids
     def send_allow_users(self):
         self.write_byte(self.addr,0)
         tmp=self.read_byte(self.addr)
@@ -23,23 +20,31 @@ class Arduino(SMBus):
             self.write_i2c_block_data(self.addr,1,i[:-1].encode())
             time.sleep(0.6)
         self.write_byte(self.addr,2)
+    #recurer les uid dans un fichier
     def recv_users(self):
         while True:
             now=datetime.datetime.now()
-            iud=""
+            uid=""
             recv=self.read_i2c_block_data(self.addr,2,8)
             if recv==[0 for x in range(8)]:
                 break;
             for i in range(len(recv)):
-                iud+=chr(recv[i])
-            self.dst.write(iud+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"\n")
-    def get_status(self):
-        self.write_byte(self.addr,0)
-        tmp=self.read_byte(self.addr)
-        retour=self.dico.get(self.read_byte(self.addr))
-        if(retour!=None): retour()
+                uid+=chr(recv[i])
+            self.dst.write(uid+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"\n")
+            time.sleep(0.6)
 
+#on instancie un objet de la class
 arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
-arduino.send_allow_users()
-time.sleep(20)
-arduino.recv_users()
+while True:
+    try:
+        arduino.send_allow_users()
+        while True:
+            try:
+                time.sleep(25)
+                arduino.recv_users()
+            except:
+                time.sleep(2)
+                arduino.send_allow_users()
+                time.sleep(5)
+    except:
+        time.sleep(4)
