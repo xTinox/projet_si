@@ -103,11 +103,13 @@ void sendData(){
               buffer_users[i]=""; 
            }
            compteur_uid_send=0;
+           Wire.write(0);
         }
         else {
           char buff[8]="";
           buffer_users[compteur_uid_send].toCharArray(buff,8);
           Wire.write(buff,8);
+          if(!(buffer_users[0]==""))compteur_uid_send++;
         }
     }
 }
