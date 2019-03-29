@@ -2,13 +2,14 @@
 from smbus2 import SMBus
 import datetime
 import time
+import os
 class Arduino(SMBus):
     """docstring for Arduino."""
     def __init__(self,addr,path_src,path_dst):
         super().__init__(1)
         self.addr=addr
-        self.src=path_src
-        self.dst=path_dst
+        self.src="/home/pi/projet_si/code_raspberry/"+path_src
+        self.dst="/home/pi/projet_si/code_raspberry/"+path_dst
     def __str__(self):
         return "Arduino sur l'addresse {}".format(self.addr)
     #envoyer les uids
