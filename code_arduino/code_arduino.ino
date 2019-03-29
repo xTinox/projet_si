@@ -102,8 +102,9 @@ void sendData(){
            for(int i=0;i<TAILLE_TAB;i++){
               buffer_users[i]=""; 
            }
+           byte zero[8]={0};
            compteur_uid_send=0;
-           Wire.write(0);
+           Wire.write(zero,8);
         }
         else {
           char buff[8]="";
