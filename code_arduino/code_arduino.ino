@@ -21,7 +21,7 @@ String buffer_uid_users="";
 String *allow_users=NULL;
 unsigned nb_allow_users=0;
 
-String buffer_users[6];
+String buffer_users[10]="";
 unsigned int nb_buffer_users=0;
 
 void setup() {
@@ -47,16 +47,6 @@ void loop() {
     if(! rfid.PICC_IsNewCardPresent()) return;
     //nous vérifions que l'uid est lu
     if(! rfid.PICC_ReadCardSerial()) return;
-    //on cree le tab si il n'existe pas
-    /*Clement test ça
-    if(buffer_users==NULL) {
-      Serial.println("test");
-      buffer_users=(String*) calloc(1,sizeof(String));
-    }
-    //reallocation de la mémoir
-    else{
-     realloc(buffer_users,nb_buffer_users*sizeof(String));
-    }*/
     //on lie l'uid de 4 octés
     for(int i=0;i<4;i++){
     //on ajoute les octés au buffer
@@ -73,7 +63,6 @@ void loop() {
     }
     //on increment le nb
     nb_buffer_users++;
-    
     delay(3500);
 }
 
