@@ -1,0 +1,13 @@
+[Unit]
+Description=Il faut que je dorme
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/home/pi/projet_si/code_raspberry/raspberry.py >  /home/pi/projet_si/log.log 2>&1 
+Restart=on-failure 
+RestartSec=30
+User=pi
+
+[Install]
+WantedBy=multi-user.target
