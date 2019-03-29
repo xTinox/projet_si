@@ -40,3 +40,4 @@ class Arduino(SMBus):
 
 arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
 arduino.send_allow_users()
+arduino.recv_users()
