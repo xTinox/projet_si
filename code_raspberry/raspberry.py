@@ -22,10 +22,14 @@ class Arduino(SMBus):
             time.sleep(0.6)
         self.write_byte(self.addr,2)
     def recv_users(self):
-        iud=""
-        for i in self.read_i2c_block_data(self.addr,2,8):
-            iud+=i
-        self.dst.write(iud+"\n")
+        while True:
+            iud=""
+            recv=self.read_i2c_block_data(self.addr,2,8)
+            if recv==[0 for x in range(8)]:
+                break;
+            for i in len(recv)):
+                iud+=recv[i]
+            self.dst.write(iud+"\n")
     def get_status(self):
         self.write_byte(self.addr,0)
         tmp=self.read_byte(self.addr)
@@ -33,4 +37,5 @@ class Arduino(SMBus):
         if(retour!=None): retour()
 
 arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
+arduino.get_status()
 arduino.get_status()
