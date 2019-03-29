@@ -40,4 +40,5 @@ class Arduino(SMBus):
 
 arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
 arduino.send_allow_users()
+time.sleep(20)
 arduino.recv_users()
