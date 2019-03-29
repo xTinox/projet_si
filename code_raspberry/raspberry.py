@@ -16,6 +16,8 @@ class Arduino(SMBus):
     def __str__(self):
         return "Arduino sur l'address {}".format(self.addr)
     def send_allow_users(self):
+        self.write_byte(self.addr,0)
+        tmp=self.read_byte(self.addr)
         for i in self.src:
             #on lie les uid et on enlève le \n (retour ligne) d'ou le [:1]
             self.write_i2c_block_data(self.addr,1,i[:-1].encode())
@@ -37,5 +39,4 @@ class Arduino(SMBus):
         if(retour!=None): retour()
 
 arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
-arduino.get_status()
-arduino.get_status()
+arduino.send_allow_users()
