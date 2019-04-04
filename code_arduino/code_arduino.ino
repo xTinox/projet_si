@@ -107,8 +107,10 @@ void sendData(){
            Wire.write(zero,8);
         }
         else {
-          char buff[8]="";
-          buffer_users[compteur_uid_send].toCharArray(buff,8);
+          //le 9 permet de prendre l'uid + le /0 de find de str
+          char buff[9]="";
+          buffer_users[compteur_uid_send].toCharArray(buff,9);
+          Serial.println(buff);
           Wire.write(buff,8);
           if(!(buffer_users[0]==""))compteur_uid_send++;
         }
