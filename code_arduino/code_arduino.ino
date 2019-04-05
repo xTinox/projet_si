@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
     //on check que les iud soit importé
-    if(! flag_users){
+    if(flag_users==0){
       wait();
       return;
     }
@@ -113,8 +113,6 @@ void sendData(){
           Wire.write(buff,8);
           if(!(buffer_users[0]==""))compteur_uid_send++;
         }
-        Serial.print("test :");
-        Serial.println(compteur_uid_send);
     }
 }
 
