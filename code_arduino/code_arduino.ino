@@ -97,7 +97,7 @@ void sendData(){
       //cas envoie donnée  buffer_users
       case(1):
         //clear buffer
-        if(compteur_uid_send>nb_buffer_users){
+        if(compteur_uid_send==nb_buffer_users){
            nb_buffer_users=0;
            for(int i=0;i<TAILLE_TAB;i++){
               buffer_users[i]=""; 
@@ -110,10 +110,11 @@ void sendData(){
           //le 9 permet de prendre l'uid + le /0 de find de str
           char buff[9]="";
           buffer_users[compteur_uid_send].toCharArray(buff,9);
-          Serial.println(buff);
           Wire.write(buff,8);
           if(!(buffer_users[0]==""))compteur_uid_send++;
         }
+        Serial.print("test :");
+        Serial.println(compteur_uid_send);
     }
 }
 
