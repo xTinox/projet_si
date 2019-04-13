@@ -12,7 +12,8 @@ class Arduino(SMBus):
         self.dst="/home/pi/projet_si/code_raspberry/"+path_dst
         self.list=[]
         f=open(self.src,"r")
-        [self.list.append(i[:-1]) for i in f]
+	#on cree une list des uid autorisé
+        [self.list.append(i[:-1].ljust(8,"0") for i in f]
     def __str__(self):
         return "Arduino sur l'addresse {}".format(self.addr)
     #envoyer les uids
