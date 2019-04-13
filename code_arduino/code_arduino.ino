@@ -30,7 +30,6 @@ void setup() {
     SPI.begin(); //On initialise la connection SPI
     rfid.PCD_Init();//initialisation du lecteur rfid
     lcd.init();//initialisation du lcd
-    lcd.backlight();//initialisation du retroéclairage
     Wire.begin(SLAVE_ADDRESS);//initialisation de la liaison I2C
     Wire.onReceive(receiveData);//pin de la fonction de reception
     Wire.onRequest(sendData);//pin de la fonction d'envoie
@@ -39,6 +38,7 @@ void setup() {
 void loop() {
     //on check que les iud soit importé
     if(flag_users==0){
+      lcd.backlight();//initialisation du retroéclairage
       wait();
       return;
     }
@@ -52,6 +52,10 @@ void loop() {
     for(int i=0;i<4;i++){
     //on ajoute les octés au buffer
     buffer_uid += String(rfid.uid.uidByte[i],HEX);
+    }
+    //on ajoute des zero (ljust)
+    if(buffer_uid.length() <8){
+      for(int i=buffer_uid.length() ;i<8;i++) buffer_uid+="0";
     }
     buffer_users[nb_buffer_users]=buffer_uid;
     //si l'utilisateur est accepté
@@ -164,6 +168,7 @@ void init_allow_users(){
     }
     else buffer+=buffer_uid_users[i];
   }
+  buffer_uid_users=""; 
 }
 //fonction d'attente
 void wait(){
@@ -176,4 +181,3 @@ void wait(){
     lcd.print(".");
   }
 }
-//fonction d'envoie de donnée
