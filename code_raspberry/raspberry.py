@@ -10,6 +10,9 @@ class Arduino(SMBus):
         self.addr=addr
         self.src="/home/pi/projet_si/code_raspberry/"+path_src
         self.dst="/home/pi/projet_si/code_raspberry/"+path_dst
+        self.list=[]
+        f=open(self.src,"r")
+        [self.list.append(i[:-1]) for i in f]
     def __str__(self):
         return "Arduino sur l'addresse {}".format(self.addr)
     #envoyer les uids
@@ -19,7 +22,7 @@ class Arduino(SMBus):
         f=open(self.src,"r")
         for i in f:
             #on lie les uid et on enlève le \n (retour ligne) d'ou le [:1]
-            self.write_i2c_block_data(self.addr,1,i[:-1].encode())
+            self.write_i2c_block_data(self.addr,1,i[:-1].ljust(8,"0").encode())
             time.sleep(0.6)
         self.write_byte(self.addr,2)
         f.close()
@@ -30,11 +33,12 @@ class Arduino(SMBus):
             now=datetime.datetime.now()
             uid=""
             recv=self.read_i2c_block_data(self.addr,2,8)
+            print(recv)
             if recv==[0 for x in range(8)]:
                 break;
-            for i in range(len(recv)-1):
+            for i in range(len(recv)):
                 uid+=chr(recv[i])
-            f.write(uid+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"\n")
+            f.write(str(uid)+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"-"+str(uid in self.list)+"\n")
             time.sleep(0.6)
         f.close()
 #on instancie un objet de la class
@@ -45,7 +49,7 @@ if __name__=="__main__":
 	        arduino.send_allow_users()
 	        while True:
 	            try:
-	                time.sleep(8)
+	                time.sleep(20)
 	                arduino.recv_users()
 
 	            except:
