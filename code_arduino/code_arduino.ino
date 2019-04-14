@@ -2,6 +2,7 @@
 #include <MFRC522.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <avr/wdt.h>
 
 #define SLAVE_ADDRESS 0x12 // arduino
 #define SS_PIN 10 //slave select RFID
@@ -26,6 +27,8 @@ String buffer_users[TAILLE_TAB]="";
 unsigned int nb_buffer_users=0;
 
 void setup() {
+    //watch dog 
+    wdt_enable(WDTO_8S);
     Serial.begin(9600);
     SPI.begin(); //On initialise la connection SPI
     rfid.PCD_Init();//initialisation du lecteur rfid
@@ -36,13 +39,15 @@ void setup() {
 }
 
 void loop() {
+    delay(50);
+    lcd.clear();
+    lcd.backlight();//initialisation du retroéclairage
+    wdt_reset();
     //on check que les iud soit importé
     if(flag_users==0){
-      lcd.backlight();//initialisation du retroéclairage
       wait();
       return;
     }
-    lcd.clear();
     buffer_uid="";//on vide le buffer
     //nous vérifions si une carte est presente devant le lecteur
     if(! rfid.PICC_IsNewCardPresent()) return;
@@ -159,6 +164,7 @@ void recv_allow_users(){
 void init_allow_users(){
   String buffer="";
   int c=0;
+  if(allow_users!=NULL) free(allow_users);
   allow_users=(String*) calloc(nb_allow_users,sizeof(String));
   for(int i=0;i<(nb_allow_users*9);i++){
     if(buffer_uid_users[i]==separateur){
