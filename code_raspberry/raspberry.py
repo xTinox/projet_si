@@ -35,7 +35,7 @@ class Arduino(SMBus):
             uid=""
             recv=self.read_i2c_block_data(self.addr,3,8)
             if recv==[0 for x in range(8)]:
-                break;
+                break
             for i in range(len(recv)):
                 uid+=chr(recv[i])
             f.write(str(uid)+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"-"+str(uid in self.list)+"\n")
@@ -43,18 +43,18 @@ class Arduino(SMBus):
         f.close()
 #on instancie un objet de la class
 if __name__=="__main__":
-	arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
-	while True:
-	    try:
-	        arduino.send_allow_users()
-	        while True:
-	            try:
-	                time.sleep(20)
-	                arduino.recv_users()
+    arduino=Arduino(0x12,path_src="allow_users.txt",path_dst="log_users.txt")
+    while True:
+        try:
+            arduino.send_allow_users()
+            while True:
+                try:
+                    time.sleep(20)
+                    arduino.recv_users()
 
-	            except:
-	                time.sleep(2)
-	                arduino.send_allow_users()
-	                time.sleep(5)
-	    except:
-	        time.sleep(4)
+                except:
+                    time.sleep(2)
+                    arduino.send_allow_users()
+                    time.sleep(5)
+        except:
+            time.sleep(4)

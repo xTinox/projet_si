@@ -20,7 +20,8 @@ int flag_users=0;
 String buffer_uid="";
 String buffer_uid_users="";
 String *allow_users=NULL;
-unsigned nb_allow_users=0;
+unsigned int nb_allow_users=0;
+unsigned int buffer_nb_allow_users=0;
 
 String buffer_users[TAILLE_TAB]="";
 unsigned int nb_buffer_users=0;
@@ -36,13 +37,14 @@ void setup() {
 }
 
 void loop() {
+    delay(50);
+    lcd.clear();
+    lcd.backlight();//initialisation du retroéclairage
     //on check que les iud soit importé
     if(flag_users==0){
-      lcd.backlight();//initialisation du retroéclairage
       wait();
       return;
     }
-    lcd.clear();
     buffer_uid="";//on vide le buffer
     //nous vérifions si une carte est presente devant le lecteur
     if(! rfid.PICC_IsNewCardPresent()) return;
@@ -82,16 +84,15 @@ void receiveData(int byteCount){
             break;
           case(2):
            init_allow_users();
-           flag_users=1;
+           flag_users=1;  
            break;
           case(3):
-           flag_users=2;  
+           flag_users=1;  
       } 
     }
 }
 
 void sendData(){
-    static int compteur_uid_send=0;
     //switch
     switch(flag_users){
       //cas reception
@@ -100,23 +101,8 @@ void sendData(){
         break;
       //cas envoie donnée  buffer_users
       case(1):
-        //clear buffer
-        if(compteur_uid_send==nb_buffer_users){
-           nb_buffer_users=0;
-           for(int i=0;i<TAILLE_TAB;i++){
-              buffer_users[i]=""; 
-           }
-           byte zero[8]={0};
-           compteur_uid_send=0;
-           Wire.write(zero,8);
-        }
-        else {
-          //le 9 permet de prendre l'uid + le /0 de find de str
-          char buff[9]="";
-          buffer_users[compteur_uid_send].toCharArray(buff,9);
-          Wire.write(buff,8);
-          if(!(buffer_users[0]==""))compteur_uid_send++;
-        }
+        send_uid_users();
+        break;
     }
 }
 
@@ -153,14 +139,15 @@ void recv_allow_users(){
              buffer_uid_users+=buffer;
           }
           buffer_uid_users+=separateur;
-          nb_allow_users++;
+          buffer_nb_allow_users++;
 }
 //on cree le tableau des utilisateur accepté
 void init_allow_users(){
   String buffer="";
   int c=0;
-  allow_users=(String*) calloc(nb_allow_users,sizeof(String));
-  for(int i=0;i<(nb_allow_users*9);i++){
+  if(allow_users!=NULL) free(allow_users);
+  allow_users=(String*) calloc(buffer_nb_allow_users,sizeof(String));
+  for(int i=0;i<(buffer_nb_allow_users*9);i++){
     if(buffer_uid_users[i]==separateur){
       allow_users[c]=buffer;
       buffer="";
@@ -169,6 +156,8 @@ void init_allow_users(){
     else buffer+=buffer_uid_users[i];
   }
   buffer_uid_users=""; 
+  nb_allow_users=buffer_nb_allow_users;
+  buffer_nb_allow_users=0;
 }
 //fonction d'attente
 void wait(){
@@ -180,4 +169,26 @@ void wait(){
     lcd.setCursor(i,1);
     lcd.print(".");
   }
+}
+// envoie uid
+void send_uid_users(){
+  // init compteur
+  static int compteur_uid_send=0;
+  //clear buffer
+        if(compteur_uid_send==nb_buffer_users){
+           nb_buffer_users=0;
+           for(int i=0;i<TAILLE_TAB;i++){
+              buffer_users[i]=""; 
+           }
+           byte zero[8]={0};
+           compteur_uid_send=0;
+           Wire.write(zero,8);
+        }
+        else {
+          //le 9 permet de prendre l'uid + le /0 de find de str
+          char buff[9]="";
+          buffer_users[compteur_uid_send].toCharArray(buff,9);
+          Wire.write(buff,8);
+          if(!(buffer_users[0]==""))compteur_uid_send++;
+        }
 }
