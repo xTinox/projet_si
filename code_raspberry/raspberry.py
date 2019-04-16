@@ -33,8 +33,7 @@ class Arduino(SMBus):
         while True:
             now=datetime.datetime.now()
             uid=""
-            recv=self.read_i2c_block_data(self.addr,2,8)
-            print(recv)
+            recv=self.read_i2c_block_data(self.addr,3,8)
             if recv==[0 for x in range(8)]:
                 break;
             for i in range(len(recv)):
