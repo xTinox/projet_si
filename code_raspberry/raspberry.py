@@ -19,7 +19,9 @@ class Arduino(SMBus):
     #envoyer les uids
     def send_allow_users(self):
         self.write_byte(self.addr,0)
+        #a changer
         tmp=self.read_byte(self.addr)
+        cmd=os.popen("bash -c '../code_bash/recv_users.sh'").close()
         f=open(self.src,"r")
         for i in f:
             #on lie les uid et on enlève le \n (retour ligne) d'ou le [:1]
