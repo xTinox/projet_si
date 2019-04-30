@@ -150,6 +150,7 @@ void init_allow_users(){
   for(int i=0;i<(buffer_nb_allow_users*9);i++){
     if(buffer_uid_users[i]==separateur){
       allow_users[c]=buffer;
+      Serial.println(buffer);
       buffer="";
       c++;
     }
@@ -180,9 +181,9 @@ void send_uid_users(){
            for(int i=0;i<TAILLE_TAB;i++){
               buffer_users[i]=""; 
            }
-           byte zero[8]={0};
+           byte un[8]={1,1,1,1,1,1,1,1};
            compteur_uid_send=0;
-           Wire.write(zero,8);
+           Wire.write(un,8);
         }
         else {
           //le 9 permet de prendre l'uid + le /0 de find de str
