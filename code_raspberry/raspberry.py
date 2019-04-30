@@ -20,8 +20,7 @@ class Arduino(SMBus):
     def send_allow_users(self):
         self.write_byte(self.addr,0)
         #a changer
-        tmp=self.read_byte(self.addr)
-        cmd=os.popen("bash -c '../code_bash/recv_users.sh'").close()
+        os.popen("bash -c '/home/pi/projet_si/code_bash/recv_user.sh'").close()
         f=open(self.src,"r")
         for i in f:
             #on lie les uid et on enlève le \n (retour ligne) d'ou le [:1]
@@ -31,12 +30,14 @@ class Arduino(SMBus):
         f.close()
     #recurer les uid dans un fichier
     def recv_users(self):
+	#on verifie que la carte est deja récupe les iuds
+        if not self.read_byte(self.addr): self.send_allow_users()
         f=open(self.dst,"a")
         while True:
             now=datetime.datetime.now()
             uid=""
             recv=self.read_i2c_block_data(self.addr,3,8)
-            if recv==[0 for x in range(8)]:
+            if recv==[1 for x in range(8)]:
                 break
             for i in range(len(recv)):
                 uid+=chr(recv[i])
